@@ -1,3 +1,6 @@
+			//HOLA NELSONNN XDDDDDD
+			//HOLA DANIEL :v  
+
 #ifndef DomTree_h
 #define DomTree_h
 #include "Node.h"
@@ -9,7 +12,6 @@ using std::list;
 using std::string;
 using namespace std;
 
-// AAAAAAAAAAAAAAAAAAAAAAAAAAAA
 class DOM_Tree
 {
     private:
