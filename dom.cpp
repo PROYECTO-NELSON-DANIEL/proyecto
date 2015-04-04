@@ -14,5 +14,6 @@ int main()
     ae.appendChild(d);
     ae.appendChild(da);
     ae.appendChild(db, 2);
+    ad.appendChild("<hola>xxxxxx<b>yyyyy</b></hola>");
     return 0;
 }
