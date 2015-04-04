@@ -1,6 +1,6 @@
 			//HOLA NELSONNN XDDDDDD
-			//HOLA DANIEL :v  
-			//SLKDFMSDKLFMS
+			//HOLA DANIEL :v
+
 
 #ifndef DomTree_h
 #define DomTree_h
@@ -18,7 +18,7 @@ class DOM_Tree
     private:
         // ATRIBUTOS
         Node* raiz;
-        
+
         //METODOS
         static Node* copiar(const Node *r);
     public:
@@ -27,10 +27,10 @@ class DOM_Tree
         DOM_Tree(const Element e) { raiz=new Node(e); }
         //DOM_Tree(Element e, list<DOM_Tree> hijos) {raiz->setElement(e); this->hijos = hijos;}
         DOM_Tree(const DOM_Tree &d) { raiz=copiar(d.raiz); } // Constructor copia
-        
+
         //Metodos de Inspeccion
-        DOM_Tree childNode(int pos); // este retorna un arbol, no un nodo. 
-        
+        DOM_Tree childNode(int pos); // este retorna un arbol, no un nodo.
+
         //Metodos de modificacion
         void appendChild(DOM_Tree h);/*Agrega un nuevo hijo en la posicion p del arbol, si no se especifica posicion se agrega como ultimo hijo*/
         void appendChild(DOM_Tree h, int pos); //Sobrecarga con posicion
@@ -63,7 +63,7 @@ Node* DOM_Tree::copiar(const Node *r)
 void DOM_Tree::appendChild(DOM_Tree h)
 {
     Node *aux;
-    
+
     if(raiz==NULL)
         raiz=copiar(h.raiz);
     else
@@ -118,4 +118,7 @@ void DOM_Tree::appendChild(DOM_Tree h, int pos)
         }
     }
 }
+
+
+
 #endif
