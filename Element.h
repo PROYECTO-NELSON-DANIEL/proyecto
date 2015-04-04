@@ -17,6 +17,7 @@ class Element
     public:
     Element(): tagname(), innerthtml(), attrList() {};
     Element (const string name): tagname(name), innerthtml(), attrList() {};
+    Element (string name, string inhtml): tagname(name), innerthtml(inhtml), attrList() {};
     Element (string name, list<string> atributos, string inhtml): tagname(name), innerthtml(inhtml), attrList(atributos) {};
     string tagName(){ return(this->tagname); }
     list<string> attributeList(){ return(attrList); }
