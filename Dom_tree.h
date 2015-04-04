@@ -237,6 +237,7 @@ void DOM_Tree::replaceChild(const DOM_Tree h, const int pos)
 
 }
 
+
 DOM_Tree DOM_Tree::convertir(string h)
 {
     int j(0), k;
@@ -298,6 +299,7 @@ void DOM_Tree::appendChild(string h, int pos)
 
 
 // METODOS DE INSPECCION
+
 DOM_Tree DOM_Tree::getElementByID(string id)
 {
     DOM_Tree arbol;
