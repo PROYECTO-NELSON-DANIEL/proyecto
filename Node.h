@@ -16,9 +16,9 @@ class Node
 		Node *firstchild, *nextsibling;
 	public:
 		//Constructores
-
-		Node(Element elemento): e(elemento), firstchild(NULL),nextsibling(NULL){}//Con parametro
-		Node(Element elemento, Node* hijo, Node* hermano): e(elemento), firstchild(hijo),nextsibling(hermano){}//Con parametro
+        Node(): e(Element()), firstchild(NULL),nextsibling(NULL){};
+		Node(Element elemento): e(elemento), firstchild(NULL), nextsibling(NULL){};//Con parametro
+		Node(Element elemento, Node* hijo, Node* hermano): e(elemento), firstchild(hijo), nextsibling(hermano){};//Con parametro
 		//Métodos de modificación
 		void setElement(Element elemento){e=elemento;}
 		void setNextSibling(Node* hermano){nextsibling=hermano;}

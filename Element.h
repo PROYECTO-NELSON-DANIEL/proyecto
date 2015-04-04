@@ -9,16 +9,15 @@ using std::string;
 class Element
 {
     private:
-    //tagName:
-    string tagname;
+    //tagName, innerHTML
+    string tagname, innerthtml;
     //attrList
     list<string> attrList;
-    //innerHTML
-    string innerthtml;
 
     public:
-    Element (const string name){tagname = name;}
-    Element (string name, list<string> atributos, string inhtml) {tagname = name; attrList = atributos; innerthtml = inhtml;}
+    Element(): tagname(), innerthtml(), attrList() {};
+    Element (const string name): tagname(name), innerthtml(), attrList() {};
+    Element (string name, list<string> atributos, string inhtml): tagname(name), innerthtml(inhtml), attrList(atributos) {};
     string tagName(){ return(this->tagname); }
     list<string> attributeList(){ return(attrList); }
     string innerHTML() { return (innerthtml); }
