@@ -32,7 +32,7 @@ class DOM_Tree
         //Constructores
         DOM_Tree(): raiz(NULL){}; // Constructor sin parametros
         DOM_Tree(const Element e) { raiz=new Node(e); }
-        //DOM_Tree(Element e, list<DOM_Tree> hijos) {raiz->setElement(e); this->hijos = hijos;}
+        DOM_Tree(Element e, list<DOM_Tree> hijos);
         DOM_Tree(const DOM_Tree &d) { raiz=copiar(d.raiz); } // Constructor copia
 
         //Metodos de Inspeccion
@@ -58,6 +58,17 @@ class DOM_Tree
         void operator=(const DOM_Tree &h);
 
 };
+
+/***CONSTRUCTORES***/
+DOM_Tree::DOM_Tree(Element e, list<DOM_Tree> hijos)
+{
+    raiz=new Node(e);
+    while(!hijos.empty())
+    {
+        appendChild(hijos.front());
+        hijos.pop_front();
+    }
+}
 
 /***METODOS DE MODIFICACION***/
 Node* DOM_Tree::copiar(const Node *r)
@@ -167,8 +178,8 @@ void DOM_Tree::removeChild(int pos)
                 aux1 = raiz->firstChild();
                 for(i=2; i<=pos; i++)
                 {
-                aux2 = aux1;
-                aux1 = aux1->nextSibling();
+                    aux2 = aux1;
+                    aux1 = aux1->nextSibling();
                 }
                 if(aux1 != NULL)
                 {
@@ -185,10 +196,6 @@ void DOM_Tree::removeChild(int pos)
     }
     else
         cerr << "ERROR! no se pudo eliminar. (Arbol vacio)" << endl;
-
-
-
-
 }
 
 void DOM_Tree::replaceChild(const DOM_Tree h, const int pos)
@@ -202,8 +209,8 @@ void DOM_Tree::replaceChild(const DOM_Tree h, const int pos)
         {
             if(pos == 1)
             {
-               aux1 = raiz->firstChild();
-               h.raiz->setNextSibling(aux1->nextSibling()) ;
+                aux1 = raiz->firstChild();
+                h.raiz->setNextSibling(aux1->nextSibling()) ;
                 raiz->setFirstChild(h.raiz);
                 aux1->setNextSibling(NULL);
                 vaciar(aux1);
@@ -213,14 +220,11 @@ void DOM_Tree::replaceChild(const DOM_Tree h, const int pos)
                 aux1 = raiz->firstChild();
                 for(i=2; i<=pos; i++)
                 {
-                aux2 = aux1;
-                aux1 = aux1->nextSibling();
+                    aux2 = aux1;
+                    aux1 = aux1->nextSibling();
                 }
                 if(aux1 != NULL)
                 {
-
-
-
                     aux2->setNextSibling(h.raiz);
                     h.raiz->setNextSibling(aux1->nextSibling());
                     aux1->setNextSibling(NULL);
@@ -235,7 +239,6 @@ void DOM_Tree::replaceChild(const DOM_Tree h, const int pos)
     }
     else
         cerr << "ERROR! Arbol vacio! " << endl;
-
 }
 
 void DOM_Tree::replaceChild(const string h, const int pos)
@@ -244,7 +247,6 @@ void DOM_Tree::replaceChild(const string h, const int pos)
 
     arb = convertir(h);
     replaceChild(arb, pos);
-
 }
 
 void DOM_Tree::appendChild(string h)
@@ -267,12 +269,13 @@ void DOM_Tree::appendChild(string h, int pos)
 
 DOM_Tree DOM_Tree::convertir(string h)
 {
-    int j(0), k;
+    int i, j, k;
     Element e;
     DOM_Tree arb, aux;
-    string name1, inn;
-    stack<Element> a;
-    stack<string> p, q;
+    string name, inn, tag, atr;
+    list<string> atrb;
+    stack<Element> a, b;
+    stack<string> inners;
 
     while(!h.empty())
     {
@@ -281,24 +284,64 @@ DOM_Tree DOM_Tree::convertir(string h)
             j=h.find('>');
             if(h[1]!='/')
             {
-                name1=h.substr(1, j-1);
-                p.push(name1);
+                name=h.substr(1, j-1);
+                if(name.find(' ')!=-1)
+                {
+                    i=name.find(' ');
+                    tag=name.substr(0, i);
+                    name.erase(0, i+1);
+                    while(!name.empty())
+                    {
+                        if(name.find(' ')!=-1)
+                        {
+                            i=name.find(' ');
+                            atr=name.substr(0, i);
+                            atrb.push_back(atr);
+                            name.erase(0, i+1);
+                        }
+                        else
+                        {
+                            atrb.push_back(name);
+                            name.clear();
+                        }
+                    }
+                }
+                else
+                    tag=name;
+                e=Element(tag, atrb, inn);
+                b.push(e);
+                h.erase(0, j+1);
             }
             else
             {
-                e=Element(p.top(), q.top());
+                e=b.top();
+                b.pop();
+                e.setInnerHTML(inners.top());
                 a.push(e);
-                p.pop();
-                q.pop();
+                inners.pop();
+                if(h[j+1]!='<')
+                {
+                    h.erase(0, j+1);
+                    if(!h.empty())
+                    {
+                        k=h.find('<');
+                        inn=inners.top();
+                        inn+=h.substr(0, k);
+                        h.erase(0, k);
+                        inners.pop();
+                        inners.push(inn);
+                    }
+                }
+                else
+                    h.erase(0, j+1);
             }
-            h.erase(0, j+1);
         }
         else
         {
             k=h.find('<');
             inn=h.substr(0, k);
             h.erase(0, k);
-            q.push(inn);
+            inners.push(inn);
         }
     }
     while(!a.empty())
@@ -316,7 +359,6 @@ DOM_Tree DOM_Tree::getElementByID(string id)
 
     buscarID(arbol, id, raiz);
     return (arbol);
-
 }
 
 void DOM_Tree::buscarID(DOM_Tree &h, string id, Node* p)
@@ -324,13 +366,12 @@ void DOM_Tree::buscarID(DOM_Tree &h, string id, Node* p)
     if(p!=NULL)
     {
         if( (p->element()).tagName() == id)
-        h.raiz = copiar(p);
+            h.raiz = copiar(p);
 
         buscarID(h, id, p->firstChild() );
         buscarID(h, id, p->nextSibling());
 
     }
-
 }
 
 DOM_Tree DOM_Tree::childNode(const int pos)
@@ -350,16 +391,13 @@ DOM_Tree DOM_Tree::childNode(const int pos)
                aux1->setNextSibling(NULL);
                arbol.raiz = copiar(aux1);
                vaciar(aux1);
-
             }
             else
             {
                 aux1 = raiz->firstChild();
                 for(i=2; i<=pos; i++)
-                {
-
-                aux1 = aux1->nextSibling();
-                }
+                    aux1 = aux1->nextSibling();
+                
                 if(aux1 != NULL)
                 {
                     aux1->setNextSibling(NULL);
@@ -386,7 +424,7 @@ DOM_Tree DOM_Tree::childNode(const int pos)
 void DOM_Tree::operator=(const DOM_Tree  &h)
 {
     if(this!=&h)
-    raiz = copiar(h.raiz);
+    	raiz = copiar(h.raiz);
 }
 
 #endif
