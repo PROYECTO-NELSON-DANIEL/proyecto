@@ -27,7 +27,17 @@ class Node
 		Node* firstChild()const{return(firstchild);}
 		Node* nextSibling()const{return(nextsibling);}
 		Element element()const{return(e);}
+
+		//sobrecarga de operadores
+		void operator=(const Node &x);
 };
+
+void Node::operator=(const Node &x)
+{
+    this->e = x.e;
+    firstchild = x.firstchild;
+    nextsibling = x.nextsibling;
+}
 
 #endif
 

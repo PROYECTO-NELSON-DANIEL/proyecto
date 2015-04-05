@@ -16,6 +16,7 @@ class Element
 
     public:
     Element(): tagname(), innerthtml(), attrList() {};
+    Element(const Element &x) {tagname = x.tagname; innerthtml = x.innerthtml; attrList = x.attrList;} //Constructor copia
     Element (const string name): tagname(name), innerthtml(), attrList() {};
     Element (string name, string inhtml): tagname(name), innerthtml(inhtml), attrList() {};
     Element (string name, list<string> atributos, string inhtml): tagname(name), innerthtml(inhtml), attrList(atributos) {};
@@ -26,6 +27,18 @@ class Element
     void setAttributeList (const list<string> atributos){ attrList = atributos; }
     void setInnerHTML(const string inhtml) {innerthtml = inhtml;}
 
+    //sobrecarga de operadores
+    void operator=(const Element &x);
+
 };
+
+void Element::operator=(const Element &x)
+{
+
+    this->tagname = x.tagname;
+    this->innerthtml = x.innerthtml;
+    this->attrList = x.attrList;
+
+}
 
 #endif

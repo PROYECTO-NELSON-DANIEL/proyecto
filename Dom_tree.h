@@ -37,6 +37,8 @@ class DOM_Tree
 
         //Metodos de Inspeccion
         DOM_Tree childNode(int pos); // este retorna un arbol, no un nodo.
+        DOM_Tree getElementByID(string id);
+
 
         //Metodos de modificacion
         void appendChild(const DOM_Tree h);
@@ -45,10 +47,9 @@ class DOM_Tree
         void appendChild(string h, int pos); //Sobrecarga con cadena HTML y posicion
         void removeChild(const int pos);
         void replaceChild(const DOM_Tree h, const int pos);
+        void replaceChild(const string h, const int pos);
         void vaciar();
 
-        DOM_Tree getElementByID(string id);/*Devuelve el subarbol cuya raíz es el element que tenga el ID dado. Si no existe dicho
-    elemento, devuelve el árbol vacío.*/
 
         //Destructor
         ~DOM_Tree() { vaciar(); }
@@ -58,7 +59,7 @@ class DOM_Tree
 
 };
 
-// METODOS DE MODIFICACION
+/***METODOS DE MODIFICACION***/
 Node* DOM_Tree::copiar(const Node *r)
 {
     Node *aux(NULL);
@@ -237,6 +238,32 @@ void DOM_Tree::replaceChild(const DOM_Tree h, const int pos)
 
 }
 
+void DOM_Tree::replaceChild(const string h, const int pos)
+{
+    DOM_Tree arb;
+
+    arb = convertir(h);
+    replaceChild(arb, pos);
+
+}
+
+void DOM_Tree::appendChild(string h)
+{
+    DOM_Tree a;
+    a=convertir(h);
+    appendChild(a);
+}
+
+void DOM_Tree::appendChild(string h, int pos)
+{
+    DOM_Tree a;
+    a=convertir(h);
+    appendChild(a, pos);
+}
+
+
+/***METODOS DE INSPECCION***/
+
 
 DOM_Tree DOM_Tree::convertir(string h)
 {
@@ -246,7 +273,7 @@ DOM_Tree DOM_Tree::convertir(string h)
     string name1, inn;
     stack<Element> a;
     stack<string> p, q;
-    
+
     while(!h.empty())
     {
         if(h[0]=='<')
@@ -283,23 +310,6 @@ DOM_Tree DOM_Tree::convertir(string h)
     return (arb);
 }
 
-void DOM_Tree::appendChild(string h)
-{
-    DOM_Tree a;
-    a=convertir(h);
-    appendChild(a);
-}
-
-void DOM_Tree::appendChild(string h, int pos)
-{
-    DOM_Tree a;
-    a=convertir(h);
-    appendChild(a, pos);
-}
-
-
-// METODOS DE INSPECCION
-
 DOM_Tree DOM_Tree::getElementByID(string id)
 {
     DOM_Tree arbol;
@@ -323,14 +333,60 @@ void DOM_Tree::buscarID(DOM_Tree &h, string id, Node* p)
 
 }
 
+DOM_Tree DOM_Tree::childNode(const int pos)
+{
+    DOM_Tree arbol;
+
+    Node *aux1;
+    int i;
+
+    if(raiz!= NULL)
+    {
+        if(pos!= 0)
+        {
+            if(pos == 1)
+            {
+               aux1 = raiz->firstChild();
+               aux1->setNextSibling(NULL);
+               arbol.raiz = copiar(aux1);
+               vaciar(aux1);
+
+            }
+            else
+            {
+                aux1 = raiz->firstChild();
+                for(i=2; i<=pos; i++)
+                {
+
+                aux1 = aux1->nextSibling();
+                }
+                if(aux1 != NULL)
+                {
+                    aux1->setNextSibling(NULL);
+                    arbol.raiz = copiar(aux1);
+                    vaciar(aux1);
+                }
+                else
+                    cerr << "ERROR! posicion invalida!" << endl;
+            }
+        }
+        else
+            cerr << "ERROR!  posicion invalida!" << endl;
+    }
+    else
+        cerr << "ERROR! Arbol vacio! " << endl;
+
+    return (arbol);
+
+}
 
 
 
-/****Sobrecarga de operadores***/
+/***Sobrecarga de operadores**/
 void DOM_Tree::operator=(const DOM_Tree  &h)
 {
     if(this!=&h)
-    raiz = this->copiar(h.raiz);
+    raiz = copiar(h.raiz);
 }
 
 #endif
