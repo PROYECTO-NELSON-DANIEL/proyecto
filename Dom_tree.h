@@ -7,6 +7,7 @@
 #define DomTree_h
 #include "Node.h"
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <list>
 #include <stack>
@@ -26,9 +27,13 @@ class DOM_Tree
         static Node* copiar(const Node *r);
         void vaciar(Node* r);
         void buscarID(DOM_Tree &h, string id, Node* p);
+        static void imprimirArbol(const Node *raiz, int esp);
+        static void imprimirAtributos(list<string> atributos);
         DOM_Tree convertir(const string s);
+        static void identar(int cont);
 
     public:
+
         //Constructores
         DOM_Tree(): raiz(NULL){}; // Constructor sin parametros
         DOM_Tree(const Element e) { raiz=new Node(e); }
@@ -56,6 +61,7 @@ class DOM_Tree
 
         //Sobrecarga de operadores
         void operator=(const DOM_Tree &h);
+        friend ostream& operator << (ostream &o, const DOM_Tree &h);
 
 };
 
@@ -76,6 +82,11 @@ void DOM_Tree::appendChild(DOM_Tree h)
 {
     Node *aux;
 
+    if(h.raiz->element().tagName() == "html" )
+        raiz->setFirstChild(h.raiz);
+    else
+    {
+
     if(raiz==NULL)
         raiz=copiar(h.raiz);
     else
@@ -84,13 +95,22 @@ void DOM_Tree::appendChild(DOM_Tree h)
             raiz->setFirstChild(copiar(h.raiz));
         else
         {
-            aux=raiz->firstChild();
-            while(aux->nextSibling()!=NULL)
+           /* aux = raiz->firstChild();
+            if(aux->firstChild() == NULL)
             {
-                aux=aux->nextSibling();
-            }
-            aux->setNextSibling(copiar(h.raiz));
+                aux->setFirstChild(copiar(h.raiz));
+            }*/
+          //  else
+          //  {
+                aux=raiz->firstChild();
+                while(aux->nextSibling()!=NULL)
+                {
+                    aux=aux->nextSibling();
+                }
+                aux->setNextSibling(copiar(h.raiz));
+            //}
         }
+    }
     }
 }
 
@@ -388,5 +408,75 @@ void DOM_Tree::operator=(const DOM_Tree  &h)
     if(this!=&h)
     raiz = copiar(h.raiz);
 }
+
+ostream& operator <<(ostream &o, const DOM_Tree &h)  /*********/
+{
+    int esp;
+    Node* aux;
+
+    if(&h.raiz != NULL)
+    {
+        o << "<" << h.raiz->element().tagName() << ">" << endl;
+        aux = h.raiz->firstChild();
+
+        DOM_Tree::imprimirArbol(aux, 0);
+    }
+
+    return o;
+}
+
+void DOM_Tree::imprimirArbol(const Node* raiz, int esp)/********/
+{
+    Node* aux;
+
+    if( raiz != NULL )
+    {
+            if( raiz->firstChild() != NULL)
+          {
+
+            identar(esp);
+            cout << "<" << raiz->element().tagName();
+            imprimirAtributos(raiz->element().attributeList());
+            cout << ">" << endl;
+            imprimirArbol(raiz->firstChild(), esp+1);
+            identar(esp);
+            cout << "</" << raiz->element().tagName() << ">" << endl;
+
+            }
+            else
+            {
+            identar(esp);
+            cout << "<" << raiz->element().tagName();
+            imprimirAtributos(raiz->element().attributeList());
+            cout << ">";
+            cout << raiz->element().innerHTML() << "</" << raiz->element().tagName() << ">" << endl;
+
+            }
+            imprimirArbol(raiz->nextSibling(), esp);
+    }
+
+}
+
+void DOM_Tree::imprimirAtributos(list<string> atributos)
+{
+    while(!atributos.empty())
+    {
+        cout << " " << atributos.front();
+        atributos.pop_front();
+    }
+}
+
+
+void DOM_Tree::identar(int cont)
+{
+    int i;
+
+    for(i=0; i<cont; i++)
+    {
+    cout << "       ";
+    }
+}
+
+
 
 #endif

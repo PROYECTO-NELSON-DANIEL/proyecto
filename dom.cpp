@@ -3,20 +3,30 @@
 
 int main()
 {
-    Element a("a"), b("b"), c("c"), d("d");
-    DOM_Tree da(a), db(b), dc(b), dd(b), ad, ae;
+    Element a("html"), b("head"), c("title", "Ejemplo de pagina web"), d("body"), e("h1", "Hola mundo!"), f("!documenttype html");
+    Element g("p", "Bye!!");
+    DOM_Tree html(a), head(b), title(c), body(d), h1(e), arbol, document(f), p1(g);
+    list<string> l;
+
+    l.push_back("id=\"contenido\"");
+    Element h("p", l, "Hola mundo!!!");
+    DOM_Tree p2(h);
 
     d = c;
 
+    head.appendChild(title);
+    body.appendChild(h1);
+    body.appendChild(p1);
+    body.appendChild(p2);
+    html.appendChild(head);
+    html.appendChild(body);
+    document.appendChild(html);
 
-    ad.appendChild(da);
-    ad.appendChild(db);
-    ad.appendChild(dc);
-    ae.appendChild(dd);
+    //body.appendChild(title);
 
-    ae.appendChild(d);
-    ae.appendChild(da);
-    ae.appendChild(db, 2);
-    ad.appendChild("<hola>xxxxxx<b>yyyyy</b></hola>");
+
+
+    cout << document << endl;
+
     return 0;
 }
