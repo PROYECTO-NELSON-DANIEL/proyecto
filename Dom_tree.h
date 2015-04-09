@@ -11,8 +11,10 @@
 #include <string>
 #include <list>
 #include <stack>
+#include <vector>
 
 using std::list;
+using std::vector;
 using std::stack;
 using std::string;
 using namespace std;
@@ -287,47 +289,76 @@ void DOM_Tree::appendChild(string h, int pos)
 
 DOM_Tree DOM_Tree::convertir(string h)
 {
-    int j(0), k;
+    int j, k, i;
     Element e;
-    DOM_Tree arb, aux;
-    string name1, inn;
-    stack<Element> a;
-    stack<string> p, q;
+    DOM_Tree aux;
+    string n1, n2, inn, tag, atr;
+    list<string> atrb;
+    vector<DOM_Tree> a;
+    
 
     while(!h.empty())
     {
-        if(h[0]=='<')
+        k=h.find('<');
+        j=h.find('>');
+        if(k!=-1 && j!=-1)
         {
-            j=h.find('>');
-            if(h[1]!='/')
+            n1=h.substr(k+1, j-k-1);
+            if(n1.find(' ')!=-1)
             {
-                name1=h.substr(1, j-1);
-                p.push(name1);
+                i=n1.find(' ');
+                tag=n1.substr(0, i);
+                n1.erase(0, i+1);
+                while(!n1.empty())
+                {
+                    if(n1.find(' ')!=-1)
+                    {
+                        i=n1.find(' ');
+                        atr=n1.substr(0, i);
+                        atrb.push_back(atr);
+                        n1.erase(0, i+1);
+                    }
+                    else
+                    {
+                        atrb.push_back(n1);
+                        n1.clear();
+                    }
+                }
+                n1=tag;
             }
-            else
-            {
-                e=Element(p.top(), q.top());
-                a.push(e);
-                p.pop();
-                q.pop();
-            }
+            n2="</"+n1+'>';
             h.erase(0, j+1);
+            k=h.find(n2);
+            inn=h.substr(0, k);
+            h.erase(k, n2.size());
         }
         else
         {
-            k=h.find('<');
-            inn=h.substr(0, k);
-            h.erase(0, k);
-            q.push(inn);
+            inn=h;
+            h.clear();
         }
+        
+        e=Element(n1, atrb, inn);
+        if(!e.attributeList().empty())
+            cout<<e.attributeList().front()<<endl;
+        aux=DOM_Tree(e);
+        a.insert(a.begin(), aux);
     }
+    a.erase(a.begin());
+    
     while(!a.empty())
     {
-        aux=DOM_Tree(a.top());
-        arb.appendChild(aux);
-        a.pop();
+        aux=a[0];
+        a.erase(a.begin()+0);
+        if(!a.empty())
+        {
+            i=0;
+            while(a[i].raiz->element().innerHTML().find(aux.raiz->element().innerHTML())==-1)
+                i++;
+            a[i].appendChild(aux, 1);
+        }
     }
-    return (arb);
+    return (aux);
 }
 
 DOM_Tree DOM_Tree::getElementByID(string id)
