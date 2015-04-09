@@ -207,10 +207,6 @@ void DOM_Tree::removeChild(int pos)
     }
     else
         cerr << "ERROR! no se pudo eliminar. (Arbol vacio)" << endl;
-
-
-
-
 }
 
 void DOM_Tree::replaceChild(const DOM_Tree h, const int pos)
@@ -240,9 +236,6 @@ void DOM_Tree::replaceChild(const DOM_Tree h, const int pos)
                 }
                 if(aux1 != NULL)
                 {
-
-
-
                     aux2->setNextSibling(h.raiz);
                     h.raiz->setNextSibling(aux1->nextSibling());
                     aux1->setNextSibling(NULL);
@@ -266,7 +259,6 @@ void DOM_Tree::replaceChild(const string h, const int pos)
 
     arb = convertir(h);
     replaceChild(arb, pos);
-
 }
 
 void DOM_Tree::appendChild(string h)
@@ -283,10 +275,7 @@ void DOM_Tree::appendChild(string h, int pos)
     appendChild(a, pos);
 }
 
-
 /***METODOS DE INSPECCION***/
-
-
 DOM_Tree DOM_Tree::convertir(string h)
 {
     int j, k, i;
@@ -299,6 +288,7 @@ DOM_Tree DOM_Tree::convertir(string h)
 
     while(!h.empty())
     {
+        atrb=list<string>();
         k=h.find('<');
         j=h.find('>');
         if(k!=-1 && j!=-1)
@@ -379,9 +369,7 @@ void DOM_Tree::buscarID(DOM_Tree &h, string id, Node* p)
 
         buscarID(h, id, p->firstChild() );
         buscarID(h, id, p->nextSibling());
-
     }
-
 }
 
 DOM_Tree DOM_Tree::childNode(const int pos)
@@ -401,15 +389,13 @@ DOM_Tree DOM_Tree::childNode(const int pos)
                aux1->setNextSibling(NULL);
                arbol.raiz = copiar(aux1);
                vaciar(aux1);
-
             }
             else
             {
                 aux1 = raiz->firstChild();
                 for(i=2; i<=pos; i++)
                 {
-
-                aux1 = aux1->nextSibling();
+                    aux1 = aux1->nextSibling();
                 }
                 if(aux1 != NULL)
                 {
@@ -430,8 +416,6 @@ DOM_Tree DOM_Tree::childNode(const int pos)
     return (arbol);
 
 }
-
-
 
 /***Sobrecarga de operadores**/
 void DOM_Tree::operator=(const DOM_Tree  &h)
@@ -462,9 +446,8 @@ void DOM_Tree::imprimirArbol(const Node* raiz, int esp)/********/
 
     if( raiz != NULL )
     {
-            if( raiz->firstChild() != NULL)
-          {
-
+        if( raiz->firstChild() != NULL)
+        {
             identar(esp);
             cout << "<" << raiz->element().tagName();
             imprimirAtributos(raiz->element().attributeList());
@@ -472,20 +455,17 @@ void DOM_Tree::imprimirArbol(const Node* raiz, int esp)/********/
             imprimirArbol(raiz->firstChild(), esp+1);
             identar(esp);
             cout << "</" << raiz->element().tagName() << ">" << endl;
-	
-            }
-            else
-            {
+        }
+        else
+        {
             identar(esp);
             cout << "<" << raiz->element().tagName();
             imprimirAtributos(raiz->element().attributeList());
             cout << ">";
             cout << raiz->element().innerHTML() << "</" << raiz->element().tagName() << ">" << endl;
-	
-            }
-            imprimirArbol(raiz->nextSibling(), esp);
+        }
+        imprimirArbol(raiz->nextSibling(), esp);
     }
-
 }
 
 void DOM_Tree::imprimirAtributos(list<string> atributos)
@@ -497,17 +477,13 @@ void DOM_Tree::imprimirAtributos(list<string> atributos)
     }
 }
 
-
 void DOM_Tree::identar(int cont)
 {
     int i;
 
     for(i=0; i<cont; i++)
     {
-    cout << "       ";
+        cout << "       ";
     }
 }
-
-
-
 #endif
