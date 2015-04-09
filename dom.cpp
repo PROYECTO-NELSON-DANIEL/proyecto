@@ -4,15 +4,19 @@
 int main()
 {
     Element a("a"), b("b"), c("c"), d("d");
-    DOM_Tree da(a), db(b), dc(c), dd(d), ad, ae;
-    list<DOM_Tree> l;
+    DOM_Tree da(a), db(b), dc(b), dd(b), ad, ae;
+
     d = c;
-    l.push_back(da);
-    l.push_back(db);
-    l.push_back(dc);
-    l.push_back(dd);
 
-    ad=DOM_Tree(a, l);
 
+    ad.appendChild(da);
+    ad.appendChild(db);
+    ad.appendChild(dc);
+    ae.appendChild(dd);
+
+    ae.appendChild(d);
+    ae.appendChild(da);
+    ae.appendChild(db, 2);
+    ad.appendChild("<hola>xxxxxx<b>yyyyy</b></hola>");
     return 0;
 }
