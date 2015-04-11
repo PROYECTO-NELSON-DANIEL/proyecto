@@ -34,13 +34,14 @@ class DOM_Tree
         DOM_Tree convertir(const string s);
         static void identar(int cont);
         static void imprimirHastaTag(string &h, string &tag, string tagRaiz, int esp);
+        static string encontrarTagName(string h);
 
     public:
 
         //Constructores
         DOM_Tree(): raiz(NULL){}; // Constructor sin parametros
         DOM_Tree(const Element e) { raiz=new Node(e); }
-        //DOM_Tree(Element e, list<DOM_Tree> hijos) {raiz->setElement(e); this->hijos = hijos;}
+        DOM_Tree(Element e, list<DOM_Tree> hijos);
         DOM_Tree(const DOM_Tree &d) { raiz=copiar(d.raiz); } // Constructor copia
 
         //Metodos de Inspeccion
@@ -67,6 +68,21 @@ class DOM_Tree
         friend ostream& operator << (ostream &o, const DOM_Tree &h);
 
 };
+
+    /***CONSTRUCTORES***/
+DOM_Tree::DOM_Tree(Element e, list<DOM_Tree> hijos)
+{
+        raiz=new Node(e);
+
+        while(!hijos.empty())
+        {
+            appendChild(hijos.front());
+            hijos.pop_front();
+        }
+
+
+}
+
 
 /***METODOS DE MODIFICACION***/
 Node* DOM_Tree::copiar(const Node *r)
@@ -327,8 +343,6 @@ DOM_Tree DOM_Tree::convertir(string h)
         }
 
         e=Element(n1, atrb, inn);
-       // if(!e.attributeList().empty())
-            //cout<<e.attributeList().front()<<endl;
         aux=DOM_Tree(e);
         a.insert(a.begin(), aux);
     }
@@ -536,14 +550,15 @@ void DOM_Tree::imprimirHastaTag(string &h, string &tag, string tagRaiz, int esp)
         cout << h.substr(0, i);
         }
 
-        tag = h.substr(i+1, j-i-1);
-        h.erase(0, j+1);
-        if( ('/' +tag)!=tagRaiz)
-        {
-            tagaux = '/' + tag;
-            i= h.find(tagaux);
-            h.erase(0, i+1+tagaux.length());
-        }
+
+           tag =  encontrarTagName(h.substr(i+1, j-i-1));
+            h.erase(0, j+1);
+            if( ('/' +tag)!=tagRaiz)
+            {
+                tagaux = '/' + tag;
+                i= h.find(tagaux);
+                h.erase(0, i+1+tagaux.length());
+            }
 
     }
     else
@@ -555,6 +570,16 @@ void DOM_Tree::imprimirHastaTag(string &h, string &tag, string tagRaiz, int esp)
             h.erase();
         }
     }
+
+
+}
+
+string DOM_Tree::encontrarTagName(string h)
+{
+    if(h.find(' ')!=-1)
+        return( h.substr(0, h.find(' ')) );
+    else
+        return h;
 
 
 }

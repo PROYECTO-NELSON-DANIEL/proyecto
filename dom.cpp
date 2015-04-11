@@ -10,17 +10,24 @@ int main()
     DOM_Tree explota;
     list<string> l;
     string cadena, c1, c2;
+    list<DOM_Tree> hijos;
 
 
-    getline(cin, cadena);
+    hijos.push_back(head);
+    hijos.push_back(title);
 
-    //cadena = "<html><body>hola mundo</body></html>";
-    /*while(cin)
-    {
-    cin >> c1;
-    cadena=cadena+c1;
-    }*/
-   /* l.push_back("id=\"contenido\"");
+    DOM_Tree lol(a, hijos);
+
+    cout << lol;
+
+/*cadena = "<html><body>hola mundo</body></html>";
+explota.appendChild(cadena);
+cout << explota;**/
+
+   // getline(cin, cadena);
+
+
+    l.push_back("id=\"contenido\"");
     Element h("p", l, "Hola mundo!!!");
     DOM_Tree p2(h);
 
@@ -31,12 +38,12 @@ int main()
 	body.appendChild(p2);
 	html.appendChild(head);
 	html.appendChild(body);
-	document.appendChild(html);*/
+	document.appendChild(html);
 
-    explota.appendChild(cadena);
+   // explota.appendChild(cadena);
 
-	//cout << html << endl;
-	cout << explota;
+	cout << html << endl;
+	//cout << explota;
 
 
     return 0;
