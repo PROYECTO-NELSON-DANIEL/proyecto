@@ -33,6 +33,7 @@ class DOM_Tree
         static void imprimirAtributos(list<string> atributos);
         DOM_Tree convertir(const string s);
         static void identar(int cont);
+        static void imprimirHastaTag(string &h, string &tag, string tagRaiz, int esp);
 
     public:
 
@@ -84,10 +85,7 @@ void DOM_Tree::appendChild(DOM_Tree h)
 {
     Node *aux;
 
-    if(h.raiz->element().tagName() == "html" )
-        raiz->setFirstChild(h.raiz);
-    else
-    {
+
 
     if(raiz==NULL)
         raiz=copiar(h.raiz);
@@ -113,7 +111,7 @@ void DOM_Tree::appendChild(DOM_Tree h)
             //}
         }
     }
-    }
+
 }
 
 void DOM_Tree::appendChild(DOM_Tree h, int pos)
@@ -284,7 +282,7 @@ DOM_Tree DOM_Tree::convertir(string h)
     string n1, n2, inn, tag, atr;
     list<string> atrb;
     vector<DOM_Tree> a;
-    
+
 
     while(!h.empty())
     {
@@ -327,15 +325,15 @@ DOM_Tree DOM_Tree::convertir(string h)
             inn=h;
             h.clear();
         }
-        
+
         e=Element(n1, atrb, inn);
-        if(!e.attributeList().empty())
-            cout<<e.attributeList().front()<<endl;
+       // if(!e.attributeList().empty())
+            //cout<<e.attributeList().front()<<endl;
         aux=DOM_Tree(e);
         a.insert(a.begin(), aux);
     }
     a.erase(a.begin());
-    
+
     while(!a.empty())
     {
         aux=a[0];
@@ -362,11 +360,16 @@ DOM_Tree DOM_Tree::getElementByID(string id)
 
 void DOM_Tree::buscarID(DOM_Tree &h, string id, Node* p)
 {
+    int k;
+    list<string> atributos;
     if(p!=NULL)
     {
-        if( (p->element()).tagName() == id)
-        h.raiz = copiar(p);
-
+        atributos = (p->element()).attributeList();
+        while(!atributos.empty())
+        {
+            if( atributos.front().find(id) != -1)
+            h.raiz = copiar(p);
+        }
         buscarID(h, id, p->firstChild() );
         buscarID(h, id, p->nextSibling());
     }
@@ -429,42 +432,73 @@ ostream& operator <<(ostream &o, const DOM_Tree &h)  /*********/
     int esp;
     Node* aux;
 
-    if(&h.raiz != NULL)
+    if(h.raiz != NULL)
     {
-        o << "<" << h.raiz->element().tagName() << ">" << endl;
-        aux = h.raiz->firstChild();
-
-        DOM_Tree::imprimirArbol(aux, 0);
+        if(h.raiz->element().tagName() == "html");
+        o << "<" << "!document type" << ">" << endl;
+        DOM_Tree::imprimirArbol(h.raiz, 0);
     }
-
     return o;
 }
 
 void DOM_Tree::imprimirArbol(const Node* raiz, int esp)/********/
 {
-    Node* aux;
+    Node* hermano, *hijo;
+    string tag, inner;
 
     if( raiz != NULL )
     {
-        if( raiz->firstChild() != NULL)
-        {
-            identar(esp);
-            cout << "<" << raiz->element().tagName();
-            imprimirAtributos(raiz->element().attributeList());
-            cout << ">" << endl;
-            imprimirArbol(raiz->firstChild(), esp+1);
-            identar(esp);
-            cout << "</" << raiz->element().tagName() << ">" << endl;
-        }
-        else
-        {
-            identar(esp);
-            cout << "<" << raiz->element().tagName();
-            imprimirAtributos(raiz->element().attributeList());
-            cout << ">";
-            cout << raiz->element().innerHTML() << "</" << raiz->element().tagName() << ">" << endl;
-        }
-        imprimirArbol(raiz->nextSibling(), esp);
+
+        hermano = NULL;
+        hijo = NULL;
+        inner = raiz->element().innerHTML();
+        hermano=raiz->firstChild();
+        hijo= raiz->firstChild();
+
+
+
+            if( raiz->firstChild() != NULL)
+            {
+                    identar(esp);
+                    cout << "<" << raiz->element().tagName();
+                    imprimirAtributos(raiz->element().attributeList());
+                    cout << ">" << endl;
+
+
+                    while(!inner.empty())
+                    {
+                        imprimirHastaTag(inner, tag, raiz->element().tagName(), esp); /***/
+
+
+                        if(hijo!=NULL)
+                        {
+                        cout << endl;
+                            imprimirArbol(hijo, esp+1);
+                            hijo=hijo->firstChild();
+                        }
+                        imprimirHastaTag(inner, tag, raiz->element().tagName(), esp); /***/
+
+                        if( hermano->nextSibling() != NULL)
+                        {
+                        cout << endl;
+                            imprimirArbol(hermano->nextSibling(), esp+1);
+                            hermano = hermano->nextSibling();
+                        }
+
+                    }
+                     cout << endl;
+                    identar(esp);
+                    cout << "</" << raiz->element().tagName() << ">" << endl;
+            }
+            else
+            {
+                    identar(esp);
+                    cout << "<" << raiz->element().tagName();
+                    imprimirAtributos(raiz->element().attributeList());
+                    cout << ">";
+                    cout << raiz->element().innerHTML() << "</" << raiz->element().tagName() << ">"<< endl;
+            }
+
     }
 }
 
@@ -486,4 +520,49 @@ void DOM_Tree::identar(int cont)
         cout << "       ";
     }
 }
+
+void DOM_Tree::imprimirHastaTag(string &h, string &tag, string tagRaiz, int esp)
+{
+    string tagaux;
+    int i, j;
+
+    i= h.find('<');
+    j= h.find('>');
+    if(i!=-1 && j!=-1)
+    {
+         if(!h.substr(0, i).empty())
+        {
+        identar(esp+1);
+        cout << h.substr(0, i);
+        }
+
+        tag = h.substr(i+1, j-i-1);
+        h.erase(0, j+1);
+        if( ('/' +tag)!=tagRaiz)
+        {
+            tagaux = '/' + tag;
+            i= h.find(tagaux);
+            h.erase(0, i+1+tagaux.length());
+        }
+
+    }
+    else
+    {
+        if(!h.empty())
+        {
+            identar(esp+1);
+            cout << h;
+            h.erase();
+        }
+    }
+
+
+}
+
+
 #endif
+
+
+
+
+
